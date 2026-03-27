@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trick Dinner Question</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #fdf6e3;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        h1 {
+            color: #3a200a;
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+        }
+
+        .options-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px; 
+            width: 100%;
+            height: 100px;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            font-weight: bold;
+            transition: transform 0.2s ease;
+        }
+
+        #safeBtn {
+            background: linear-gradient(45deg, #26d0ce, #1ad29d);
+            color: white;
+        }
+
+        #safeBtn:hover {
+            transform: scale(1.1);
+        }
+
+        #runBtn {
+            background: linear-gradient(45deg, #2ba554, #2f0e7c);
+            color: white;
+            position: relative;
+            z-index: 5;
+        }
+
+        #successPage {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            text-align: center;
+            background: linear-gradient(-45deg, #fdf6e3, #63d686, #68bbb8, #aa952d);
+            background-size: 400% 400%;
+            animation: gradientBG 10s ease infinite;
+            overflow: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .heart {
+            position: absolute;
+            color: rgba(56, 177, 116, 0.3);
+            font-size: 24px;
+            user-select: none;
+            animation: floatUp 5s linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        .success-title {
+            font-size: 3.5rem;
+            color: #42a01e;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+            z-index: 101;
+            animation: bounce 1s infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+
+        .success-desc {
+            font-size: 1.5rem;
+            color: #275b8a;
+            z-index: 101;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="mainPage">
+        <h1>هنفطر بكره ؟؟ </h1>
+        <div class="options-container">
+            <button id="safeBtn">اه طبعا </button>
+            <button id="runBtn"> لااا </button>
+        </div>
+    </div>
+
+    <div id="successPage">
+        <div style="font-size: 80px; margin-bottom: 20px;">🎉</div>
+        <h2 class="success-title">يلا اخر حاجه </h2>
+        <p class="success-desc">😉😉😉😉😉</p>
+    </div>
+
+    <script>
+        const runBtn = document.getElementById('runBtn');
+        const safeBtn = document.getElementById('safeBtn');
+        const successPage = document.getElementById('successPage');
+        const mainPage = document.getElementById('mainPage');
+
+        runBtn.addEventListener('mouseover', () => {
+            runBtn.style.position = 'fixed';
+            const maxX = window.innerWidth - runBtn.offsetWidth - 20;
+            const maxY = window.innerHeight - runBtn.offsetHeight - 20;
+            const randomX = Math.random() * maxX;
+            const randomY = Math.random() * maxY;
+            runBtn.style.left = `${randomX}px`;
+            runBtn.style.top = `${randomY}px`;
+        });
+
+        function createHearts() {
+            const emojis = ['🥙', '🧆'];
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.classList.add('heart');
+                    heart.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+                    heart.style.left = Math.random() * 100 + 'vw';
+                    heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                    successPage.appendChild(heart);
+                    setTimeout(() => heart.remove(), 5000);
+                }, i * 300);
+            }
+        }
+
+        safeBtn.addEventListener('click', () => {
+            mainPage.style.display = 'none';
+            successPage.style.display = 'flex';
+            
+            createHearts();
+            setInterval(createHearts, 4000);
+
+            const duration = 5 * 1000;
+            const animationEnd = Date.now() + duration;
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+                const particleCount = 50 * (timeLeft / duration);
+                confetti({ particleCount, origin: { x: Math.random(), y: Math.random() - 0.2 } });
+            }, 250);
+        });
+    </script>
+</body>
+</html>
